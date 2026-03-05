@@ -73,6 +73,13 @@ class _CardsScreenState extends State<CardsScreen> {
     );
   }
 
+  // Returns the asset path for the card image
+  String getCardAssetPath(PlayingCard card) {
+    final name = card.cardName.toLowerCase();
+    final suit = card.suit.toLowerCase();
+    return 'assets/${name}_of_${suit}.png';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +95,7 @@ class _CardsScreenState extends State<CardsScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio: .8,
+                childAspectRatio: 0.8,
               ),
               itemCount: _cards.length,
               itemBuilder: (context, index) {
@@ -104,10 +111,18 @@ class _CardsScreenState extends State<CardsScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.note,
-                          size: 48,
-                          color: Colors.blueAccent,
+                        // Card image
+                        Expanded(
+                          child: Image.asset(
+                            getCardAssetPath(card),
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Icon(
+                              Icons.note,
+                              size: 48,
+                              color: Colors.blueAccent,
+                            ),
+                          ),
                         ),
 
                         SizedBox(height: 8),
