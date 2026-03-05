@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/folders_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const FoldersScreen(),
+      home: FoldersScreen(),
     );
   }
 }
