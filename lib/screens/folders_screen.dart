@@ -4,6 +4,7 @@ import '../models/folder.dart';
 import '../repositories/folder_repo.dart';
 import '../repositories/card_repo.dart';
 
+import '../screens/cards_screen.dart';
 
 class FoldersScreen extends StatefulWidget {
   @override
@@ -26,10 +27,13 @@ class _FoldersScreenState extends State {
     final folders = await _folderRepository.getAllFolders();
     final Map counts = {};
     
-    for (var folder in folders) {
-      counts[folder.id!] = await _cardRepository.getCardCountByFolder(folder.id!);
+    final countsList = await Future.wait(
+    folders.map((folder) => _cardRepository.getCardCountByFolder(folder.id!)),
+    );
+    for (int i = 0; i < folders.length; i++) {
+      counts[folders[i].id!] = countsList[i];
     }
-    
+
     setState(() {
       _folders = folders;
       _cardCounts = counts;
@@ -74,7 +78,9 @@ class _FoldersScreenState extends State {
         title: Text('Card Organizer'),
         elevation: 0,
       ),
-      body: GridView.builder(
+      body: _folders.isEmpty
+      ? Center(child: CircularProgressIndicator())
+      : GridView.builder(
         padding: EdgeInsets.all(16),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
