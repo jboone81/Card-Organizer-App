@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/card.dart';
 import '../repositories/card_repo.dart';
 import '../models/folder.dart';
+import '../screens/add_edit_card_screen.dart';
 
 class CardsScreen extends StatefulWidget {
   final Folder folder;
@@ -150,7 +151,21 @@ class _CardsScreenState extends State<CardsScreen> {
                           children: [
                             IconButton(
                               icon: Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () => _editCard(card),
+                              onPressed: () async {
+                                // Navigate to Add/Edit Card Screen
+                                final updated = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddEditCardScreen(
+                                      card: card,
+                                      folders: [/* pass your list of all folders here */],
+                                    ),
+                                  ),
+                                );
+                                if (updated == true) {
+                                  _loadCards(); // Refresh the grid after editing
+                                }
+                              },
                             ),
                             IconButton(
                               icon: Icon(Icons.delete, color: Colors.red),
