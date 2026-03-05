@@ -24,7 +24,7 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   Future _loadCards() async {
-    final cards = await _cardRepository. getCardsByFolderId(widget.folder.id!);
+    final cards = await _cardRepository.getCardsByFolderId(widget.folder.id!);
     setState(() {
       _cards = cards;
     });
@@ -35,9 +35,7 @@ class _CardsScreenState extends State<CardsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Delete Card?'),
-        content: Text(
-          'Are you sure you want to delete this card?'
-        ),
+        content: Text('Are you sure you want to delete this card?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -45,7 +43,10 @@ class _CardsScreenState extends State<CardsScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -60,12 +61,25 @@ class _CardsScreenState extends State<CardsScreen> {
     }
   }
 
+  void _editCard(PlayingCard card) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Edit card pressed')),
+    );
+  }
+
+  void _addCard() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Add card pressed')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cards in "${widget.folder.folderName}"'),
       ),
+
       body: _cards.isEmpty
           ? Center(child: Text('No cards in this folder.'))
           : GridView.builder(
@@ -79,15 +93,14 @@ class _CardsScreenState extends State<CardsScreen> {
               itemCount: _cards.length,
               itemBuilder: (context, index) {
                 final card = _cards[index];
+
                 return Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: InkWell(
-                    onTap: () {
-                      // You could navigate to a CardDetailsScreen if you have one
-                    },
+                    onTap: () {},
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -96,7 +109,9 @@ class _CardsScreenState extends State<CardsScreen> {
                           size: 48,
                           color: Colors.blueAccent,
                         ),
+
                         SizedBox(height: 8),
+
                         Text(
                           card.cardName,
                           style: TextStyle(
@@ -105,10 +120,28 @@ class _CardsScreenState extends State<CardsScreen> {
                           ),
                           textAlign: TextAlign.center,
                         ),
+
+                        Text(
+                          card.suit,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+
                         SizedBox(height: 8),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deleteCard(card),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () => _editCard(card),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deleteCard(card),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -116,6 +149,11 @@ class _CardsScreenState extends State<CardsScreen> {
                 );
               },
             ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addCard,
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
