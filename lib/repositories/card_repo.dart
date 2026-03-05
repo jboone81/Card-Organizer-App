@@ -1,16 +1,22 @@
+import 'package:sqflite/sqflite.dart';
+import 'dart:async';
+
+import '../models/card.dart';
+import '../database_helper.dart';
+
 class CardRepository {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   // CREATE - Insert a new card
-  Future insertCard(PlayingCard card) async {
+  Future<int> insertCard(PlayingCard card) async {
     final db = await _dbHelper.database;
     return await db.insert('cards', card.toMap());
   }
 
   // READ - Get all cards
-  Future> getAllCards() async {
+  Future<List<PlayingCard>> getAllCards() async {
     final db = await _dbHelper.database;
-    final List> maps = await db.query('cards');
+    final List<Map<String, dynamic>> maps = await db.query('cards');
     
     return List.generate(maps.length, (i) {
       return PlayingCard.fromMap(maps[i]);
@@ -18,9 +24,9 @@ class CardRepository {
   }
 
   // READ - Get cards by folder ID
-  Future> getCardsByFolderId(int folderId) async {
+  Future<List<PlayingCard>> getCardsByFolderId(int folderId) async {
     final db = await _dbHelper.database;
-    final List> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db.query(
       'cards',
       where: 'folder_id = ?',
       whereArgs: [folderId],
@@ -33,9 +39,9 @@ class CardRepository {
   }
 
   // READ - Get a single card by ID
-  Future getCardById(int id) async {
+  Future<PlayingCard?> getCardById(int id) async {
     final db = await _dbHelper.database;
-    final List> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db.query(
       'cards',
       where: 'id = ?',
       whereArgs: [id],
@@ -46,7 +52,7 @@ class CardRepository {
   }
 
   // UPDATE - Update an existing card
-  Future updateCard(PlayingCard card) async {
+  Future<int> updateCard(PlayingCard card) async {
     final db = await _dbHelper.database;
     return await db.update(
       'cards',
@@ -57,7 +63,7 @@ class CardRepository {
   }
 
   // DELETE - Delete a card
-  Future deleteCard(int id) async {
+  Future<int> deleteCard(int id) async {
     final db = await _dbHelper.database;
     return await db.delete(
       'cards',
@@ -67,7 +73,7 @@ class CardRepository {
   }
 
   // Get card count for a specific folder
-  Future getCardCountByFolder(int folderId) async {
+  Future<int> getCardCountByFolder(int folderId) async {
     final db = await _dbHelper.database;
     final result = await db.rawQuery(
       'SELECT COUNT(*) as count FROM cards WHERE folder_id = ?',
@@ -77,7 +83,7 @@ class CardRepository {
   }
 
   // Move a card to a different folder
-  Future moveCardToFolder(int cardId, int newFolderId) async {
+  Future<int> moveCardToFolder(int cardId, int newFolderId) async {
     final db = await _dbHelper.database;
     return await db.update(
       'cards',
